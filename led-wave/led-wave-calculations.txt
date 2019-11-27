@@ -1,0 +1,123 @@
+// I'm trying to figure out how I made this.
+
+// SLOWNESS = 256
+
+slow = round(((sin((((float)timey + (SLOWNESS / (float)NUM_LEDS) * (float)led_select) * 2.0 * PI) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+SCALED_SLOWNESS = SLOWNESS / (float)NUM_LEDS
+// SCALED_SLOWNESS = 5.12
+
+slow = round(((sin((((float)timey + SCALED_SLOWNESS * (float)led_select) * 2.0 * PI) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+scaled_position_in_wave = SCALED_SLOWNESS * (float)led_select
+//scaled_position_in_wave = 0 -> 250.88
+
+slow = round(((sin((((float)timey + scaled_position_in_wave) * 2.0 * PI) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+scaled_position_in_wave_plus_time = (float)timey + scaled_position_in_wave
+//scaled_position_in_wave_plus_time = 0 -> 250.88 + 0, 1, 2, ...
+
+slow = round(((sin((scaled_position_in_wave_plus_time * 2.0 * PI) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+TAU = 2.0 * PI
+// TAU = 6.28318530717958647693
+
+slow = round(((sin((scaled_position_in_wave_plus_time * TAU) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+scaled_position_in_wave_plus_time_scaled_more = scaled_position_in_wave_plus_time * TAU
+//scaled_position_in_wave_plus_time_scaled_more = 0 -> 1576.33 + 0, 6.28, 12.57, ...
+
+slow = round(((sin(scaled_position_in_wave_plus_time_scaled_more / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+scaled_position_in_wave_plus_time_scaled_more_scaled_down = scaled_position_in_wave_plus_time_scaled_more / SLOWNESS
+//scaled_position_in_wave_plus_time_scaled_more_scaled_down = 0 -> 6.16 + 0, 0.025, 0.049, ...
+
+slow = round(((sin(scaled_position_in_wave_plus_time_scaled_more_scaled_down) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+// 256 * 49/50 = 250.88
+//  (256 and 0 are the same LED)
+// 250.88 * TAU = 1576.33
+// 1576.33 / 256 = 6.16
+// 6.16 + 6.16/50 = TAU
+
+height_of_sine_wave_at_this_position_and_time = sin(scaled_position_in_wave_plus_time_scaled_more_scaled_down)
+//height_of_sine_wave_at_this_position_and_time = -1 -> 1
+
+slow = round(((height_of_sine_wave_at_this_position_and_time + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+height_of_sine_wave_moved_to_positive = height_of_sine_wave_at_this_position_and_time + 1.0
+//height_of_sine_wave_moved_to_positive = -> 0 -> 2
+
+slow = round((height_of_sine_wave_moved_to_positive / 2.0) * 255.0 * BRIGHTNESS);
+
+height_of_positive_sine_wave_shortened = height_of_sine_wave_moved_to_positive / 2.0
+//height_of_positive_sine_wave_shortened = 0 -> 1
+
+slow = round(height_of_positive_sine_wave_shortened * 255.0 * BRIGHTNESS);
+
+LED_BRIGHTNESS = 255.0 * BRIGHTNESS
+//LED_BRIGHTNESS = 255
+
+slow = round(height_of_positive_sine_wave_shortened * LED_BRIGHTNESS);
+
+led_level_here = height_of_positive_sine_wave_shortened * LED_BRIGHTNESS
+//led_level_here = 0 -> 255
+
+slow = round(led_level_here);
+
+
+
+SCALED_SLOWNESS = SLOWNESS / (float)NUM_LEDS
+TAU = 2.0 * PI
+LED_BRIGHTNESS = 255.0 * BRIGHTNESS
+STEPPER = TAU / SLOWNESS
+
+scaled_position_in_wave                        = SCALED_SLOWNESS * (float)led_select
+scaled_position_in_wave_plus_time              = (float)timey + scaled_position_in_wave
+scaled_position_in_wave_plus_time_scaled_again = scaled_position_in_wave_plus_time_scaled_more * STEPPER
+height_of_sine_wave_at_this_position_and_time  = sin(scaled_position_in_wave_plus_time_scaled_again)
+height_of_sine_wave_moved_to_positive          = height_of_sine_wave_at_this_position_and_time + 1.0
+height_of_positive_sine_wave_shortened         = height_of_sine_wave_moved_to_positive / 2.0
+led_level_here                                 = height_of_positive_sine_wave_shortened * LED_BRIGHTNESS
+slow                                           = round(led_level_here);
+
+
+slow, medium, and fast are 3/3, 4/3, and 5/3 speeds.
+LCM(3,4,5) = 3*4*5
+Lowest Common Multiple
+
+
+1,2,3
+No
+
+2,3,4
+No
+
+3,4,5
+Yes
+
+4,5,6
+No
+
+5,6,7
+Yes
+
+6,7,8
+No
+
+7,8,9
+Yes
+
+8,9,10
+No
+
+9,10,11
+Yes
+
+
+
+==== Redo with new variable names ===
+
+slow = round(((sin((((float)timey * SLOW_DIRECTION * SLOW_SPEED + (SLOWNESS / (float)WAVE_LENGTH) * (float)led_select) * 2.0 * PI) / SLOWNESS) + 1.0) / 2.0) * 255.0 * BRIGHTNESS);
+
+
